@@ -2,6 +2,8 @@
 
 Elo ranking managed through the messaging software Slack.
 
+[![Deploy](https://www.herokucdn.com/deploy/button.png)](https://heroku.com/deploy)
+
 ## Installation
 
 * Set the Slack API token (you can get it from [Slack](https://api.slack.com/web)) as an environment variable named: `SLACK_API_TOKEN`
