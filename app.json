@@ -1,0 +1,6 @@
+{
+  "name": "zizou",
+  "description": "Elo ranking managed through the messaging software Slack",
+  "repository": "https://github.com/applidium/zizou",
+  "keywords": ["elo", "ranking", "slack", "football", "fifa", "pes"]
+}

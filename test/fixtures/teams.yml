@@ -1,0 +1,13 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  name: MyString
+  attack: 1
+  midfield: 1
+  defense: 1
+
+two:
+  name: MyString
+  attack: 1
+  midfield: 1
+  defense: 1

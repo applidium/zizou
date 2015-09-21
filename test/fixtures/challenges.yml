@@ -1,0 +1,11 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  player1_id: 1
+  player2_id: 1
+  date: 2015-06-30 15:57:11
+
+two:
+  player1_id: 1
+  player2_id: 1
+  date: 2015-06-30 15:57:11

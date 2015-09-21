@@ -1,0 +1,9 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  team_player1_id: 
+  team_player2_id: 
+
+two:
+  team_player1_id: 
+  team_player2_id: 
