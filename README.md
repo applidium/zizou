@@ -55,6 +55,6 @@ There are a couple of improvements we have in mind. Feel free to send us pull
 requests if you want to contribute!
 
 * Add a proper API so that a web interface can be made, in case you want to display it on a screen in your office.
-* Zizou is currently speaking french, why not improving his languages skills ? (good luck with the translation of Ribery quotes)
+* Zizou is currently speaking french, why not improve his languages skills ? (good luck with the translation of Ribery quotes)
 * Add a betting system with a fake currency.
 * More?
