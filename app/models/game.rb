@@ -2,6 +2,12 @@ class Game < ActiveRecord::Base
   belongs_to :team_player1, dependent: :destroy, class_name: "TeamPlayer"
   belongs_to :team_player2, dependent: :destroy, class_name: "TeamPlayer"
 
+  validates :team_player1, presence: :true
+  validates :team_player2, presence: :true
+
+  accepts_nested_attributes_for :team_player1
+  accepts_nested_attributes_for :team_player2
+
   def self.find_by_player(player, from = nil)
     team_players = TeamPlayer.where(player: player)
     team_players = team_players.where("created_at >= ?", from) if from.present?
