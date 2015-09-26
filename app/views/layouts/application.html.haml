@@ -1,0 +1,24 @@
+!!! 5
+%html
+  %head
+    %meta{:charset => 'utf-8'}/
+    %meta{name: "viewport", content: "width=device-width, initial-scale=1"}
+    %title= [yield(:page_title), 'Fifapplidium'].reject(&:blank?).join(' - ')
+    = stylesheet_link_tag    "application"
+    = javascript_include_tag "application"
+    = yield :page_styles
+    = yield :page_scripts
+    = csrf_meta_tags
+  %body
+    .navbar.navbar-default
+      .navbar-inner
+        .container
+          %a.brand.navbar-brand{:href => games_path} Zizou
+          %ul.nav.navbar-nav.pull-right
+            %li
+              = link_to "Games", games_path
+            %li
+              = link_to "Players", players_path
+    #content.container
+      = content_for?(:content) ? yield(:content) : yield
+

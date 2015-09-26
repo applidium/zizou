@@ -1,0 +1,15 @@
+%h1 Players
+
+%table.table
+  %thead
+    %th Ranking
+    %th Username
+    %th Rating
+  - @players.each_with_index do |p, i|
+    %tr
+      %td= i+1
+      %td= p.username
+      %td= p.rating
+
+= link_to "New player", new_player_path
+

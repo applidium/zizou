@@ -33,6 +33,10 @@ gem 'sdoc', '~> 0.4.0', group: :doc
 # gem 'capistrano-rails', group: :development
 
 gem 'responders', '~> 2.0'
+gem 'haml-rails'
+gem 'nested_form'
+gem "twitter-bootstrap-rails"
+gem 'bootstrap_form'
 
 gem 'terminal-table'
 

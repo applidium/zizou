@@ -1,0 +1,12 @@
+- if @player.errors.any?
+  .alert.alert-error
+    %h3= "#{pluralize(@player.errors.count, "error")} prohibited this player from being saved:"
+    %ul
+      - @player.errors.full_messages.each do |msg|
+        %li= msg
+
+= bootstrap_form_for @player do |f|
+  = f.text_field :username, placeholder: 'Username'
+
+  .form-actions
+    = f.submit

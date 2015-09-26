@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  resources :players
+  resources :games
 
   post 'bot' => 'bot#index'
 

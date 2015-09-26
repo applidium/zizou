@@ -1,0 +1,15 @@
+- if @game.errors.any?
+  .alert.alert-error
+    %h3= "#{pluralize(@game.errors.count, "error")} prohibited this player from being saved:"
+    %ul
+      - @game.errors.full_messages.each do |msg|
+        %li= msg
+
+= bootstrap_nested_form_for @game do |f|
+  - (1..2).each do |i|
+    = f.fields_for "team_player#{i}".to_sym, TeamPlayer.new do |tp|
+      = tp.collection_select :player_id, Player.all, :id, :username
+      = tp.text_field :score, placeholder: 'Score'
+
+  .form-actions
+    = f.submit
