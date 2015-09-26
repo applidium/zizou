@@ -4,6 +4,8 @@ class Player < ActiveRecord::Base
   has_many :team_players
   has_many :elos, dependent: :destroy
 
+  validates :username, uniqueness: true
+
   scope :player, -> { where(type: nil) }
 
   def pro?
