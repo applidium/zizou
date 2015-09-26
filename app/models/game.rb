@@ -62,7 +62,7 @@ class Game < ActiveRecord::Base
   end
 
   def team_difference
-    return (team_player2.team.team_factor - team_player1.team.team_factor) * 10
+    return (team_player2.team.team_factor - team_player1.team.team_factor) * 10 rescue 0
   end
 
   def goal_difference
