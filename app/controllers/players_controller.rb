@@ -4,7 +4,7 @@ class PlayersController < ApplicationController
   respond_to :json
 
   def index
-    @players = Player.all.sort(&:rating).reverse
+    @players = Player.all.sort_by(&:rating).reverse
   end
 
   def create
