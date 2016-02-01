@@ -1,6 +1,5 @@
 require 'slack'
 require 'ribery'
-require 'taunt'
 require 'terminal-table'
 require 'net/http'
 
@@ -13,7 +12,7 @@ class SlackBot
   end
 
   def answer
-    return "Bien tenté Jean-Mi" if @slack_token != ENV["SLACK_WEBHOOK_TOKEN"]
+    return "Nice try, monkey." if @slack_token != ENV["SLACK_WEBHOOK_TOKEN"]
 
     data = @text.split
 
@@ -26,7 +25,7 @@ class SlackBot
   end
 
   def help
-    answer = "Commandes [optionnel]\n"
+    answer = "List of commands (optional parameters are between [brackets]):\n"
 
     # hearers are methods starting with 'hear_'
     hearers = self.private_methods.select { |m| m.to_s.start_with? "hear_" }
@@ -111,30 +110,8 @@ class SlackBot
     ranking_for_scope(Player.player, n_weeks)
   end
 
-  def hear_ranking2(n_weeks = 0)
-    ranking_for_scope(PairPlayer.all, n_weeks)
-  end
-
   def hear_r(n_weeks = 0)
     r_for_scope(Player.player, n_weeks)
-  end
-
-  def hear_r2(n_weeks = 0)
-    r_for_scope(PairPlayer.all, n_weeks)
-  end
-
-  def hear_2v2(player11, player12, team1, score1, player21, player22, team2, score2)
-    _player1 = PairPlayer.find_or_create_by_users(extract_user_id(player11), extract_user_id(player12))
-    _player2 = PairPlayer.find_or_create_by_users(extract_user_id(player21), extract_user_id(player22))
-
-    _team1, _team2 = Team.find_by_name(team1), Team.find_by_name(team2)
-
-    return "Équipe #{team1} inconnue" if _team1.nil?
-    return "Équipe #{team2} inconnue" if _team2.nil?
-
-    create_game_with_players(_player1, _player2, _team1, _team2, score1, score2)
-
-    "Match (#{player11}, #{player12}, #{team1}, #{score1}) - (#{player21}, #{player22}, #{team2}, #{score2}) créé"
   end
 
   def hear_match(player1, team1, score1, player2, team2, score2)
@@ -143,20 +120,12 @@ class SlackBot
 
     _team1, _team2 = Team.find_by_name(team1), Team.find_by_name(team2)
 
-    return "Équipe #{team1} inconnue" if _team1.nil?
-    return "Équipe #{team2} inconnue" if _team2.nil?
+    return "Unknown team: #{team1}" if _team1.nil?
+    return "Unknown team: #{team2}" if _team2.nil?
 
     game = create_game_with_players(_player1, _player2, _team1, _team2, score1, score2)
 
-    answer = "Match (#{player1}, #{team1}, #{score1}) - (#{player2}, #{team2}, #{score2}) créé"
-
-    if game.drawn?
-      answer += Taunt::MATCH_DRAWN.sample
-    elsif [0, 1].sample == 0
-      answer += Taunt::MATCH_WINNER.sample % format_username(game.winner.player.username)
-    else
-      answer += Taunt::MATCH_LOSER.sample % format_username(game.loser.player.username)
-    end
+    answer = "Successfully created match: (#{player1}, #{team1}, #{score1}) - (#{player2}, #{team2}, #{score2})"
 
     return answer
   end
@@ -169,7 +138,7 @@ class SlackBot
   def hear_addteam(name, attack, midfield, defense)
     Team.create_or_update(name: name, attack: attack, midfield: midfield, defense: defense)
 
-    "#{name}(#{attack}, #{midfield}, #{defense}) créé"
+    "#{name}(#{attack}, #{midfield}, #{defense}) created."
   end
 
   def hear_challenge(player, time = "")
@@ -178,7 +147,7 @@ class SlackBot
 
     if time.length > 0
       date = DateTime.parse(time) rescue nil
-      return "Moi personnellement, j'ai pas compris l'heure moi tout seul" if date.nil?
+      return "That time seems off, I could not create a challenge." if date.nil?
 
       now = DateTime.now
       if (date.hour > now.hour) || (date.hour == now.hour && date.min > now.min)
@@ -192,14 +161,8 @@ class SlackBot
 
     score = player1.compare(player2)
 
-    answer = "#{format_username(@user_id)} invite #{format_username(other_user_id)} à prendre une fessée"
-    answer += " à #{time}" if challenge_created
-
-    if score < 0.0
-      answer += Taunt::LOSER.sample % format_username(@user_id)
-    elsif score > 0.0
-      answer += Taunt::WINNER.sample % format_username(other_user_id)
-    end
+    answer = "#{format_username(@user_id)} wants to play against #{format_username(other_user_id)}"
+    answer += " at #{time}" if challenge_created
 
     answer
   end
@@ -207,7 +170,7 @@ class SlackBot
   def hear_challenges
     challenges = Challenge.where("date >= ?", DateTime.now).order(:date)
     answer = "Challenges:\n"
-    answer += challenges.map { |challenge| "#{format_username(challenge.player1_id)} vs #{format_username(challenge.player2_id)} à #{challenge.date.strftime("%H:%M")}" }.join("\n")
+    answer += challenges.map { |challenge| "#{format_username(challenge.player1_id)} vs #{format_username(challenge.player2_id)} at #{challenge.date.strftime("%H:%M")}" }.join("\n")
     answer
   end
 
@@ -215,28 +178,28 @@ class SlackBot
     player_id = extract_user_id(player)
     player = Player.find_by(username: player_id)
 
-    return "Joueur introuvable" if player.nil?
+    return "Could not find any player with that username. John Doe is that you?" if player.nil?
 
-    answer = "Détails passionants sur #{format_username(player_id)} :\n"
-    answer << "Équipes les plus jouées : - "
+    answer = "Awesome details about #{format_username(player_id)}'s fifa career :\n"
+    answer << "Most played teams : - "
     answer << player.teams_statistics.last(3).map { |team, score| "#{team}: #{score}%" }.join(" - ")
     answer << "\n"
-    answer << "Adversaires les plus durs à battre (% de victoires) : "
+    answer << "Toughest opponents (% of victories) : "
     answer << player.opponent_statistics.take(3).map { |opponent, score| "#{format_username(opponent)} : #{score}%" }.join(" - ")
     answer << "\n"
-    answer << "Adversaires les plus faciles à battre (% de victoires) : "
+    answer << "Weakest opponents (% of victories) : "
     answer << player.opponent_statistics.last(3).reverse.map { |opponent, score| "#{format_username(opponent)} : #{score}%" }.join(" - ")
-    answer << "\n Statistiques globales : \n"
+    answer << "\n Overall stats : \n"
 
     percentage = lambda { |x| (100.0 * x / player.games_played.to_f).round(2) }
     win_rate = percentage.call(player.won.to_f)
     loss_rate = percentage.call(player.lost.to_f)
     draw_rate = percentage.call(player.drawn.to_f)
 
-    answer << "Victoires : #{win_rate}%, Défaites : #{loss_rate}%, Matches nuls : #{draw_rate}%\n"
+    answer << "Victories : #{win_rate}%, Losses : #{loss_rate}%, Draws : #{draw_rate}%\n"
     largest_victory = player.largest_victory
     if !largest_victory.nil?
-      answer << "Plus large victoire: #{format_username(largest_victory.team_player1.player.username)}"
+      answer << "Biggest victory ever: #{format_username(largest_victory.team_player1.player.username)}"
       answer << " #{largest_victory.team_player1.team.name} #{largest_victory.team_player1.score}"
       answer << " - #{largest_victory.team_player2.score} #{largest_victory.team_player2.team.name}"
       answer << " #{format_username(largest_victory.team_player2.player.username)}"
@@ -249,11 +212,11 @@ class SlackBot
 
     game = Game.last
 
-    return "Aucun match datant de moins de #{minutes} minutes" if game.blank? or game.created_at < DateTime.now - minutes.minute
+    return "No match was created within the last #{minutes} minutes" if game.blank? or game.created_at < DateTime.now - minutes.minute
 
     game.destroy
 
-    "Dernier match supprimé ! Le classement a été mis à jour."
+    "Last match registered was destroyed. Stats have been updated."
   end
 
   def hear_ribery
