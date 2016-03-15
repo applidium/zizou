@@ -3,10 +3,12 @@
 %table.table
   %thead
     %th Players
+    %th Date
     %th Score
   - @games.each do |g|
     %tr
       %td= "#{g.team_player1.player.username} vs #{g.team_player2.player.username}"
+      %td= g.created_at.strftime("%d/%m/%Y")
       %td= "#{g.team_player1.score} - #{g.team_player2.score}"
 
 = link_to "New game", new_game_path
