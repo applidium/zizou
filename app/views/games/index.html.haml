@@ -5,7 +5,7 @@
     %th Players
     %th Date
     %th Score
-  - @games.each do |g|
+  - @games.reverse.each do |g|
     %tr
       %td= "#{g.team_player1.player.username} vs #{g.team_player2.player.username}"
       %td= g.created_at.strftime("%d/%m/%Y")
