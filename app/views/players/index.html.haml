@@ -7,6 +7,10 @@
     %th F
     %th A
     %th GD
+    %th Won
+    %th Drawn
+    %th Lost
+    %th Played
     %th Rating
   - @players.each_with_index do |p, i|
     %tr
@@ -15,6 +19,10 @@
       %td= p.goals_scored
       %td= p.goals_conceded
       %td= p.goals_difference
+      %td= p.won
+      %td= p.drawn
+      %td= p.lost
+      %td= p.games_played
       %td= p.rating
 
 = link_to "New player", new_player_path
