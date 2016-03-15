@@ -142,6 +142,10 @@ class Player < ActiveRecord::Base
     games.inject(0) { |sum, game| sum + (game.team_player1.player == self ? game.team_player2.score : game.team_player1.score) }
   end
 
+  def goals_difference(from = nil)
+    goals_scored(from) - goals_conceded(from)
+  end
+
   # initialize a new player with the initial elo rating
   after_create do |player|
     Elo.create(player: player, rating: Elo::INITIAL_RATING)

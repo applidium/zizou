@@ -4,11 +4,17 @@
   %thead
     %th Ranking
     %th Username
+    %th F
+    %th A
+    %th GD
     %th Rating
   - @players.each_with_index do |p, i|
     %tr
       %td= i+1
       %td= p.username
+      %td= p.goals_scored
+      %td= p.goals_conceded
+      %td= p.goals_difference
       %td= p.rating
 
 = link_to "New player", new_player_path
